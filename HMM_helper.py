@@ -90,13 +90,15 @@ def parse_observations(text):
     obs_counter = 0
     obs = []
     obs_map = {}
-
+    
     for line in lines:
         obs_elem = []
 
-        if line[0] in "0123456789":
+        try:
+            int(line[0])
             line = line[1:]
-
+        except ValueError:
+            line = line
         for word in line:
             word = re.sub(r'[^\w]', '', word).lower()
             if word not in obs_map:
