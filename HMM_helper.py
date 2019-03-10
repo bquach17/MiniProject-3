@@ -109,6 +109,7 @@ def parse_observations(text):
 
         # Add the encoded sequence.
         obs.append(obs_elem)
+        print(obs_map)
 
     return obs, obs_map
 
