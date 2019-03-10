@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 from wordcloud import WordCloud
 from matplotlib import animation
 from matplotlib.animation import FuncAnimation
+import os
 
 
 ####################
@@ -94,8 +95,11 @@ def parse_observations(text):
     for line in lines:
         obs_elem = []
 
-        if line[0] in "0123456789":
+        try:
+            int(line[0])
             line = line[1:]
+        except ValueError:
+            line = line
 
         for word in line:
             word = re.sub(r'[^\w]', '', word).lower()
@@ -112,6 +116,19 @@ def parse_observations(text):
         print(obs_map)
 
     return obs, obs_map
+
+def get_syllable_dict(file):
+    text = open(os.path.join(os.getcwd(), file)).read()
+    syllable = {}
+    for line in text.split('\n'):
+        temp = line.split()
+        syllables_lst = []
+        if len(temp) == 0:
+            continue
+        for i in range(len(temp) - 1):
+            syllables_lst.append(temp[i + 1])
+        syllable[temp[0]] = syllables_lst;
+    return syllable
 
 def obs_map_reverser(obs_map):
     obs_map_r = {}
