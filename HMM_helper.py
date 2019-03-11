@@ -93,18 +93,26 @@ def parse_observations(text):
     obs_counter = 0
     obs = []
     obs_map = {}
+    
+    weird_words = ["'gainst", "'greeing", "'scaped", "'tis", "'twixt"]
 
     for line in lines:
         obs_elem = []
 
-        try:
-            int(line[0])
-            line = line[1:]
-        except ValueError:
-            line = line
-
         for word in line:
-            word = re.sub(r'[^\w]', '', word).lower()
+            try:
+                int(line[0])
+                continue
+            except ValueError:
+                line = line
+            word = word.lower()
+            if word[-1] not in "abcdefghijklmnopqrstuvwxyz":
+                word = word[:-1]
+            if len(word) == 0:
+                continue
+            if word[0] not in "abcdefghijklmnopqrstuvwxyz" and word not in weird_words:
+                word = word[1:]
+               
             if word not in obs_map:
                 # Add unique words to the observations map.
                 obs_map[word] = obs_counter
@@ -115,8 +123,6 @@ def parse_observations(text):
 
         # Add the encoded sequence.
         obs.append(obs_elem)
-        print(obs_map)
-
     return obs, obs_map
 
 def get_syllable_dict(file):

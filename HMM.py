@@ -36,6 +36,7 @@
 
 import random
 import numpy as np
+import HMM_helper
 
 class HiddenMarkovModel:
     '''
@@ -366,6 +367,191 @@ class HiddenMarkovModel:
                 emission.append(np.random.choice(range(self.D), p = self.O[states[-1]]))
 
         return emission, states
+    
+    def generate_stanza(self, num_lines, obs_map_r):
+        syb = HMM_helper.get_syllable_dict("data/Syllable_dictionary.txt")
+        stanza = ''
+        emission = []
+        states = []
+        j = 0
+        
+        for i in range(num_lines):
+            line = ''
+            syllables = 0
+            if i == 0:
+                states.append(np.random.choice(range(self.L), p = self.A_start))
+                emission.append(np.random.choice(range(self.D), p = self.O[states[j]]))
+                temp = syb[obs_map_r[emission[j]]]
+                for item in temp:
+                    if item[0] == 'E':
+                        continue
+                    else:
+                        syllables = int(item)
+                        break
+                line += obs_map_r[emission[j]].capitalize()
+                j += 1
+            while syllables != 10:
+                states.append(np.random.choice(range(self.L), p = self.A[states[j - 1]]))
+                new_emiss = np.random.choice(range(self.D), p = self.O[states[-1]])
+                temp = syb[obs_map_r[new_emiss]]
+                count = 0
+                for item in temp:
+                    if item[0] == 'E':
+                        continue
+                    else:
+                        count = int(item)
+                        break
+                while syllables + count > 10:
+                    new_emiss = np.random.choice(range(self.D), p = self.O[states[-1]])
+                    temp = syb[obs_map_r[new_emiss]]
+                    for item in temp:
+                        if item[0] == 'E':
+                            continue
+                        else:
+                            count = int(item)
+                            break
+                emission.append(new_emiss)
+                line += " " + obs_map_r[new_emiss]
+                syllables += count
+                j += 1
+            if num_lines == 4 and i != 3:
+                stanza += line + ',\n'
+            elif num_lines == 4 and i == 3:
+                stanza += line + ':\n'
+            elif num_lines == 2 and i == 0:
+                stanza += line + ',\n'
+            else:
+                stanza += line + '.\n'
+        return stanza
+                        
+    
+    def generate_poem(self, obs_map_r):
+        poem = ''
+        for _ in range(3):
+            poem += self.generate_stanza(4, obs_map_r)
+        poem += self.generate_stanza(2, obs_map_r)
+        return poem
+    def generate_line(self, obs_map_r, num_syll):
+        syb = HMM_helper.get_syllable_dict("data/Syllable_dictionary.txt")
+        emission = []
+        states = []
+        line = ''
+        syllables = 0
+        j = 0
+        states.append(np.random.choice(range(self.L), p = self.A_start))
+        emission.append(np.random.choice(range(self.D), p = self.O[states[j]]))
+        temp = syb[obs_map_r[emission[j]]]
+        for item in temp:
+            if item[0] == 'E':
+                continue
+            else:
+                syllables = int(item)
+                break
+        line += obs_map_r[emission[j]].capitalize()
+        j += 1
+        while syllables != num_syll:
+            states.append(np.random.choice(range(self.L), p = self.A[states[j - 1]]))
+            new_emiss = np.random.choice(range(self.D), p = self.O[states[-1]])
+            temp = syb[obs_map_r[new_emiss]]
+            count = 0
+            for item in temp:
+                if item[0] == 'E':
+                    continue
+                else:
+                    count = int(item)
+                    break
+            while syllables + count > num_syll:
+                new_emiss = np.random.choice(range(self.D), p = self.O[states[-1]])
+                temp = syb[obs_map_r[new_emiss]]
+                for item in temp:
+                    if item[0] == 'E':
+                        continue
+                    else:
+                        count = int(item)
+                        break
+            emission.append(new_emiss)
+            line += " " + obs_map_r[new_emiss]
+            syllables += count
+            j += 1
+        return line
+    
+    def generate_haiku(self, obs_map_r):
+        syb = HMM_helper.get_syllable_dict("data/Syllable_dictionary.txt")
+        stanza = ''
+        emission = []
+        states = []
+        j = 0
+        
+        for i in range(3):
+            line = ''
+            syllables = 0
+            if i == 0:
+                states.append(np.random.choice(range(self.L), p = self.A_start))
+                emission.append(np.random.choice(range(self.D), p = self.O[states[j]]))
+                temp = syb[obs_map_r[emission[j]]]
+                for item in temp:
+                    if item[0] == 'E':
+                        continue
+                    else:
+                        syllables = int(item)
+                        break
+                line += obs_map_r[emission[j]].capitalize()
+                j += 1
+            if i = 0 or i == 2:
+                while syllables != 5:
+                    states.append(np.random.choice(range(self.L), p = self.A[states[j - 1]]))
+                    new_emiss = np.random.choice(range(self.D), p = self.O[states[-1]])
+                    temp = syb[obs_map_r[new_emiss]]
+                    count = 0
+                    for item in temp:
+                        if item[0] == 'E':
+                            continue
+                        else:
+                            count = int(item)
+                            break
+                    while syllables + count > 10:
+                        new_emiss = np.random.choice(range(self.D), p = self.O[states[-1]])
+                        temp = syb[obs_map_r[new_emiss]]
+                        for item in temp:
+                            if item[0] == 'E':
+                                continue
+                            else:
+                                count = int(item)
+                                break
+                    emission.append(new_emiss)
+                    line += " " + obs_map_r[new_emiss]
+                    syllables += count
+                    j += 1
+            else:
+                while syllables != 7:
+                states.append(np.random.choice(range(self.L), p = self.A[states[j - 1]]))
+                new_emiss = np.random.choice(range(self.D), p = self.O[states[-1]])
+                temp = syb[obs_map_r[new_emiss]]
+                count = 0
+                for item in temp:
+                    if item[0] == 'E':
+                        continue
+                    else:
+                        count = int(item)
+                        break
+                while syllables + count > 10:
+                    new_emiss = np.random.choice(range(self.D), p = self.O[states[-1]])
+                    temp = syb[obs_map_r[new_emiss]]
+                    for item in temp:
+                        if item[0] == 'E':
+                            continue
+                        else:
+                            count = int(item)
+                            break
+                emission.append(new_emiss)
+                line += " " + obs_map_r[new_emiss]
+                syllables += count
+                j += 1
+            if i == 0 or i == 1:
+                stanza += line + ",\n"
+            else:
+                stanza += line + ".\n"
+        return stanza
 
 
     def probability_alphas(self, x):
