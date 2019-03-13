@@ -497,7 +497,7 @@ class HiddenMarkovModel:
                         break
                 line += obs_map_r[emission[j]].capitalize()
                 j += 1
-            if i = 0 or i == 2:
+            if i == 0 or i == 2:
                 while syllables != 5:
                     states.append(np.random.choice(range(self.L), p = self.A[states[j - 1]]))
                     new_emiss = np.random.choice(range(self.D), p = self.O[states[-1]])
@@ -509,7 +509,7 @@ class HiddenMarkovModel:
                         else:
                             count = int(item)
                             break
-                    while syllables + count > 10:
+                    while syllables + count > 5:
                         new_emiss = np.random.choice(range(self.D), p = self.O[states[-1]])
                         temp = syb[obs_map_r[new_emiss]]
                         for item in temp:
@@ -524,29 +524,29 @@ class HiddenMarkovModel:
                     j += 1
             else:
                 while syllables != 7:
-                states.append(np.random.choice(range(self.L), p = self.A[states[j - 1]]))
-                new_emiss = np.random.choice(range(self.D), p = self.O[states[-1]])
-                temp = syb[obs_map_r[new_emiss]]
-                count = 0
-                for item in temp:
-                    if item[0] == 'E':
-                        continue
-                    else:
-                        count = int(item)
-                        break
-                while syllables + count > 10:
+                    states.append(np.random.choice(range(self.L), p = self.A[states[j - 1]]))
                     new_emiss = np.random.choice(range(self.D), p = self.O[states[-1]])
                     temp = syb[obs_map_r[new_emiss]]
+                    count = 0
                     for item in temp:
                         if item[0] == 'E':
                             continue
                         else:
                             count = int(item)
                             break
-                emission.append(new_emiss)
-                line += " " + obs_map_r[new_emiss]
-                syllables += count
-                j += 1
+                    while syllables + count > 7:
+                        new_emiss = np.random.choice(range(self.D), p = self.O[states[-1]])
+                        temp = syb[obs_map_r[new_emiss]]
+                        for item in temp:
+                            if item[0] == 'E':
+                                continue
+                            else:
+                                count = int(item)
+                                break
+                    emission.append(new_emiss)
+                    line += " " + obs_map_r[new_emiss]
+                    syllables += count
+                    j += 1
             if i == 0 or i == 1:
                 stanza += line + ",\n"
             else:
